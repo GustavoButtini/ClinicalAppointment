@@ -1,5 +1,6 @@
 import { relations } from 'drizzle-orm';
 import {
+  boolean,
   integer,
   pgEnum,
   pgTable,
@@ -10,19 +11,21 @@ import {
 } from 'drizzle-orm/pg-core';
 
 export const users = pgTable('users', {
-  id: text('id').primaryKey().notNull(),
+  id: text('id').primaryKey(),
   name: text('name').notNull(),
   email: text('email').notNull().unique(),
-  password: text('password').notNull(),
+  emailVerified: boolean('email_verified')
+    .$defaultFn(() => false)
+    .notNull(),
+  image: text('image'),
+  createdAt: timestamp('created_at')
+    .$defaultFn(() => /* @__PURE__ */ new Date())
+    .notNull(),
+  updatedAt: timestamp('updated_at')
+    .$defaultFn(() => /* @__PURE__ */ new Date())
+    .notNull(),
   phone: text('phone').notNull(),
-  createdAt: timestamp('created_at', { withTimezone: true })
-    .defaultNow()
-    .notNull(),
-  updatedAt: timestamp('updated_at', { withTimezone: true })
-    .defaultNow()
-    .notNull(),
 });
-
 export const usersTableRelations = relations(users, ({ many }) => ({
   usersToClincs: many(usersToClincs),
   clinics: many(clinics),

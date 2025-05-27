@@ -1,6 +1,7 @@
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, Loader } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -23,6 +24,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { authClient } from '@/lib/auth-client';
 
 const registerSchema = z
   .object({
@@ -33,7 +35,7 @@ const registerSchema = z
       .min(1, { message: 'Email is required' }),
     password: z
       .string()
-      .min(6, { message: 'Password must be at least 6 characters long' }),
+      .min(8, { message: 'Password must be at least 8 characters long' }),
     confirmPassword: z
       .string()
       .min(1, { message: 'Confirm password is required' }),
@@ -45,6 +47,7 @@ const registerSchema = z
   });
 
 const SignUpFormComponent = () => {
+  const route = useRouter();
   const [showPass, setShowPass] = useState(false);
   const [showConfPass, setShowConfPass] = useState(false);
   const registerForm = useForm<z.infer<typeof registerSchema>>({
@@ -57,8 +60,28 @@ const SignUpFormComponent = () => {
       phone: '',
     },
   });
-  function onRegisterSubmit(data: z.infer<typeof registerSchema>) {
-    console.log('Register data:', data);
+  async function onRegisterSubmit(data: z.infer<typeof registerSchema>) {
+    await authClient.signUp.email(
+      {
+        email: data.email,
+        password: data.password,
+        name: data.name,
+        // @ts-expect-error -- phone is not in the default user type but is correctly handled by the authClient
+        phone: data.phone,
+      },
+      {
+        onSuccess: () => {
+          route.push('/dashboard');
+        },
+        onError: (error) => {
+          console.error('Registration error:', error);
+          registerForm.setError('email', {
+            type: 'manual',
+            message: 'Email already exists or is invalid',
+          });
+        },
+      },
+    );
   }
   return (
     <form
@@ -197,7 +220,17 @@ const SignUpFormComponent = () => {
         </Form>
       </CardContent>
       <CardFooter>
-        <Button>Save password</Button>
+        <Button
+          type="submit"
+          className="e-full"
+          disabled={registerForm.formState.isSubmitting}
+        >
+          {registerForm.formState.isSubmitting ? (
+            <Loader></Loader>
+          ) : (
+            <>Create Account</>
+          )}
+        </Button>
       </CardFooter>
     </form>
   );
