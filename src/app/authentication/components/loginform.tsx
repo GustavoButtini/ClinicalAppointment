@@ -1,6 +1,6 @@
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, Loader } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -148,7 +148,17 @@ const LoginFormComponent = () => {
         </Form>
       </CardContent>
       <CardFooter>
-        <Button>Login</Button>
+        <Button
+          type="submit"
+          className={
+            loginForm.formState.isSubmitting
+              ? 'w-full bg-black'
+              : 'w-full hover:bg-black'
+          }
+          disabled={loginForm.formState.isSubmitting}
+        >
+          {loginForm.formState.isSubmitting ? <Loader></Loader> : <>Login</>}
+        </Button>
       </CardFooter>
     </form>
   );

@@ -96,7 +96,7 @@ const SignUpFormComponent = () => {
   return (
     <form
       onSubmit={registerForm.handleSubmit(onRegisterSubmit)}
-      className="space-y-4"
+      className="space-y-6"
     >
       <CardHeader>
         <CardTitle>Register</CardTitle>
@@ -105,7 +105,7 @@ const SignUpFormComponent = () => {
           registration form to create your account.
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-2">
+      <CardContent className="space-y-4">
         <Form {...registerForm}>
           <FormField
             control={registerForm.control}
