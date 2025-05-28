@@ -24,7 +24,7 @@ export const users = pgTable('users', {
   updatedAt: timestamp('updated_at')
     .$defaultFn(() => /* @__PURE__ */ new Date())
     .notNull(),
-  phone: text('phone').notNull(),
+  phone: text('phone'),
 });
 export const usersTableRelations = relations(users, ({ many }) => ({
   usersToClincs: many(usersToClincs),
