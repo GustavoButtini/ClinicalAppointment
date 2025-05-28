@@ -1,8 +1,10 @@
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
@@ -22,6 +24,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { authClient } from '@/lib/auth-client';
 
 const loginFormSchema = z.object({
   email: z
@@ -30,10 +33,11 @@ const loginFormSchema = z.object({
     .min(1, { message: 'Email is required' }),
   password: z
     .string()
-    .min(8, { message: 'Password must be at least 6 characters long' }),
+    .min(8, { message: 'Password must be at least 8 characters long' }),
 });
 
 const LoginFormComponent = () => {
+  const route = useRouter();
   const [showPass, setShowPass] = useState(false);
   const loginForm = useForm<z.infer<typeof loginFormSchema>>({
     resolver: zodResolver(loginFormSchema),
@@ -43,8 +47,38 @@ const LoginFormComponent = () => {
     },
   });
 
-  const onLoginSubmit = (data: z.infer<typeof loginFormSchema>) => {
-    console.log('Login data:', data);
+  const onLoginSubmit = async (data: z.infer<typeof loginFormSchema>) => {
+    await authClient.signIn.email(
+      {
+        email: data.email,
+        password: data.password,
+      },
+      {
+        onSuccess: () => {
+          route.push('/dashboard');
+        },
+        onError: () => {
+          loginForm.setError('root', {
+            type: 'manual',
+            message: 'Invalid email or password',
+          });
+          toast.error('Invalid email or password', {
+            description: 'Please check your credentials and try again.',
+            descriptionClassName: 'text-sm text-gray-500',
+            duration: 3000,
+            icon: '🚫',
+            style: {
+              backgroundColor: '#f8d7da',
+              color: '#000',
+            },
+            action: {
+              label: 'Close',
+              onClick: () => toast.dismiss(),
+            },
+          });
+        },
+      },
+    );
   };
   return (
     <form

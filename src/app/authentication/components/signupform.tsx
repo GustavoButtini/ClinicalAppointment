@@ -4,6 +4,7 @@ import { Eye, EyeOff, Loader } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
@@ -73,11 +74,20 @@ const SignUpFormComponent = () => {
         onSuccess: () => {
           route.push('/dashboard');
         },
-        onError: (error) => {
-          console.error('Registration error:', error);
+        onError: () => {
           registerForm.setError('email', {
             type: 'manual',
             message: 'Email already exists or is invalid',
+          });
+          toast.error('Your form has errors', {
+            description: 'Please check the form and try again.',
+            icon: '🚨',
+            action: {
+              label: 'Close',
+              onClick: () => {
+                toast.dismiss();
+              },
+            },
           });
         },
       },
