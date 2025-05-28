@@ -2,10 +2,8 @@
 import { redirect } from 'next/navigation';
 import React, { useEffect } from 'react';
 
+import { sleep } from '@/actions/commons/sleep';
 import { authClient } from '@/lib/auth-client';
-function sleep(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
 
 const RedirectNotLogged = () => {
   const session = authClient.useSession();
