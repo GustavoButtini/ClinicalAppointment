@@ -1,6 +1,5 @@
-import { useRouter } from 'next/navigation';
+import { redirect } from 'next/navigation';
 
 export default function Home() {
-  const route = useRouter();
-  return route.push('/authentication');
+  redirect('/dashboard');
 }
