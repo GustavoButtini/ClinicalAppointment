@@ -44,7 +44,7 @@ export async function AppSidebar() {
                         <SidebarGroupLabel asChild>
                           <CollapsibleTrigger>{clinic.name}</CollapsibleTrigger>
                         </SidebarGroupLabel>
-                        <SidebarBaseFunctionsMenu />
+                        <SidebarBaseFunctionsMenu id={clinic.id} />
                       </SidebarGroup>
                     </Collapsible>
                   </SidebarMenuSub>
@@ -57,18 +57,21 @@ export async function AppSidebar() {
           title={baseClinicList.title}
           icon={baseClinicList.icon}
           menu={baseClinicList.menu}
+          clinicIdVar={undefined}
         />
         {/*Account options: */}
         <SidebarCollapsibleMenu
           title={accountOptionsList.title}
           icon={accountOptionsList.icon}
           menu={accountOptionsList.menu}
+          clinicIdVar={undefined}
         />
         {/*Extras options */}
         <SidebarCollapsibleMenu
           title={extrasOptionsList.title}
           icon={extrasOptionsList.icon}
           menu={extrasOptionsList.menu}
+          clinicIdVar={undefined}
         />
       </SidebarContent>
     </Sidebar>

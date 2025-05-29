@@ -6,7 +6,6 @@ import { db } from '@/db';
 import { usersToClincs } from '@/db/schema';
 import { auth } from '@/lib/auth';
 
-import QuitButton from './components/QuitButton';
 import RedirectNotLogged from './components/RedirectNotLogged';
 
 const DashBoardPage = async () => {
@@ -20,12 +19,7 @@ const DashBoardPage = async () => {
   if (userCreatedClinics.length <= 0) {
     redirect('/clinic-create');
   }
-  return (
-    <div>
-      <h1>Hello {session?.user.name} !</h1>
-      <QuitButton />
-    </div>
-  );
+  return <h1>Hello !</h1>;
 };
 
 export default DashBoardPage;

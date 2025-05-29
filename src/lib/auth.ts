@@ -43,14 +43,13 @@ export const auth = betterAuth({
     customSession(async ({ user, session }) => {
       const userclinics = await db.query.usersToClincs.findMany({
         where: eq(schema.usersToClincs.userId, user.id),
+        with: {
+          clinic: true,
+        },
       });
-      const clinics = await Promise.all(
-        userclinics.map(async (clinic) => {
-          return await db.query.clinics.findFirst({
-            where: eq(schema.clinics.id, clinic.clinicId),
-          });
-        }),
-      );
+      const clinics = userclinics.map((data) => {
+        return data.clinic;
+      });
       return {
         user: {
           ...user,

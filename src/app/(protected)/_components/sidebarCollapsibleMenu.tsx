@@ -8,11 +8,12 @@ import {
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
-type Menu = {
+
+import SidebarClinicOptions from './sidebarClinicOptions';
+
+export type Menu = {
   title: string;
   url: string;
   icon: ForwardRefExoticComponent<LucideProps>;
@@ -41,6 +42,14 @@ const checkHasIcon = (
     return <>{title}</>;
   }
 };
+declare global {
+  // Extend the globalThis interface to include clinicId
+  interface GlobalThis {
+    clinicId?: string;
+  }
+}
+(globalThis as GlobalThis).clinicId =
+  (globalThis as GlobalThis).clinicId ?? undefined;
 interface CollapsibleMenuProps {
   title: string;
   icon:
@@ -49,11 +58,13 @@ interface CollapsibleMenuProps {
       >
     | undefined;
   menu: Menu[];
+  clinicIdVar: string | undefined;
 }
 const SidebarCollapsibleMenu = ({
   title,
   icon,
   menu,
+  clinicIdVar,
 }: CollapsibleMenuProps) => {
   return (
     <Collapsible defaultOpen={false} className="group/collapsible">
@@ -71,14 +82,11 @@ const SidebarCollapsibleMenu = ({
           <SidebarGroupContent>
             <SidebarMenu>
               {menu.map((item) => (
-                <SidebarMenuItem key={item.title} className="pt-3.5 pb-3.5">
-                  <SidebarMenuButton asChild>
-                    <a href={item.url}>
-                      <item.icon />
-                      {item.title}
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
+                <SidebarClinicOptions
+                  clinicId={clinicIdVar}
+                  item={item}
+                  key={item.title}
+                />
               ))}
             </SidebarMenu>
           </SidebarGroupContent>

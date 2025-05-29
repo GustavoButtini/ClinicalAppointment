@@ -15,8 +15,10 @@ import {
 
 import SidebarCollapsibleMenu from './sidebarCollapsibleMenu';
 import { baseMenuItems } from './sideBarMainLists';
-
-const SidebarBaseFunctionsMenu = () => {
+interface SideBarBaseProps {
+  id: string;
+}
+const SidebarBaseFunctionsMenu = ({ id }: SideBarBaseProps) => {
   return (
     <CollapsibleContent>
       <SidebarGroupContent className="w-full">
@@ -40,6 +42,7 @@ const SidebarBaseFunctionsMenu = () => {
                 icon={item.icon}
                 menu={item.menu ?? []}
                 key={item.title}
+                clinicIdVar={id}
               />
             );
           })}
