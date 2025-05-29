@@ -1,7 +1,7 @@
 import React from 'react';
 
 export const PageContainer = ({ children }: { children: React.ReactNode }) => {
-  return <div className="space-y6 h-1/4 w-full p-6">{children}</div>;
+  return <div className="space-y6 h-1/6 w-full p-6">{children}</div>;
 };
 
 export const PageHeader = ({ children }: { children: React.ReactNode }) => {

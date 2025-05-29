@@ -81,7 +81,7 @@ export const usersToClinicsTableRelations = relations(
 export const doctors = pgTable('doctors', {
   id: uuid().defaultRandom().primaryKey().notNull(),
   name: text('name').notNull(),
-  imageurl: text('image_url').notNull(),
+  imageurl: text('image_url'),
   email: text('email').notNull().unique(),
   phone: text('phone').notNull(),
   // 1 Monday 2 Tuesday 3 Wednesday 4 Thursday 5 Friday 6 Saturday 0 Sunday

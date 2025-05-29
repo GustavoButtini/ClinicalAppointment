@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import { NumericFormat } from 'react-number-format';
 import { z } from 'zod';
 
+import { Button } from '@/components/ui/button';
 import {
   DialogContent,
   DialogDescription,
@@ -33,36 +34,48 @@ import * as schema from '@/db/schema';
 import { medicalSpecialties } from '../constants';
 import DisponibilityTimeFormField from './disponibilityTimeFormField';
 import WeekDayFormField from './weekDayFormField';
-export const upsertDoctorFormSchema = z.object({
-  name: z.string().trim().min(1, { message: 'You need to insert a name' }),
-  specialization: z
-    .string()
-    .trim()
-    .min(1, { message: 'You need to insert an specialization' }),
-  imageurl: z.string().trim().min(1, { message: 'You need to insert a image' }),
-  email: z.string().trim().min(1, { message: 'You need to insert an e-mail' }),
-  phone: z.string().trim().min(1, { message: 'You need to insert an phone' }),
-  availableFromWeekDay: z
-    .string()
-    .trim()
-    .min(1, { message: 'You need to insert an E-mail' }),
-  availableToWeekDay: z
-    .string()
-    .trim()
-    .min(1, { message: 'You need to insert an E-mail' }),
-  availableFromTime: z
-    .string()
-    .trim()
-    .min(1, { message: 'You need to insert an E-mail' }),
-  availableToTime: z
-    .string()
-    .trim()
-    .min(1, { message: 'You need to insert an E-mail' }),
-  appoitmentPriceInCents: z
-    .number()
-    .int()
-    .min(1, { message: 'You need to insert a price' }),
-});
+export const upsertDoctorFormSchema = z
+  .object({
+    name: z.string().trim().min(1, { message: 'You need to insert a name' }),
+    specialization: z
+      .string()
+      .trim()
+      .min(1, { message: 'You need to insert an specialization' }),
+    email: z
+      .string()
+      .trim()
+      .min(1, { message: 'You need to insert an e-mail' }),
+    phone: z.string().trim().min(1, { message: 'You need to insert an phone' }),
+    availableFromWeekDay: z
+      .string()
+      .trim()
+      .min(1, { message: 'You need to insert an E-mail' }),
+    availableToWeekDay: z
+      .string()
+      .trim()
+      .min(1, { message: 'You need to insert an E-mail' }),
+    availableFromTime: z
+      .string()
+      .trim()
+      .min(1, { message: 'You need to insert an E-mail' }),
+    availableToTime: z
+      .string()
+      .trim()
+      .min(1, { message: 'You need to insert an E-mail' }),
+    appoitmentPriceInCents: z
+      .number()
+      .int()
+      .min(1, { message: 'You need to insert a price' }),
+  })
+  .refine(
+    (data) => {
+      return data.availableFromTime < data.availableToTime;
+    },
+    {
+      message: 'The starting hour needs to be greater than  the end hour',
+      path: ['availableToTime'],
+    },
+  );
 interface UpsertDoctorFormProps {
   clinicId: string;
   isOpen: boolean;
@@ -76,7 +89,6 @@ const UpsertDoctorForm = ({ isUpdate }: UpsertDoctorFormProps) => {
     defaultValues: {
       name: '',
       specialization: '',
-      imageurl: '',
       email: '',
       phone: '',
       availableFromWeekDay: '',
@@ -153,23 +165,6 @@ const UpsertDoctorForm = ({ isUpdate }: UpsertDoctorFormProps) => {
           />
           <FormField
             control={upsertDoctorForm.control}
-            name="imageurl"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Image URL</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="This will change to an image insertion"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={upsertDoctorForm.control}
             name="email"
             render={({ field }) => (
               <FormItem>
@@ -238,6 +233,9 @@ const UpsertDoctorForm = ({ isUpdate }: UpsertDoctorFormProps) => {
               </FormItem>
             )}
           />
+          <Button type="submit" className="w-full">
+            Add Doctor
+          </Button>
         </form>
       </Form>
     </DialogContent>

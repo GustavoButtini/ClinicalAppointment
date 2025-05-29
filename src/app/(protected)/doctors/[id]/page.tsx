@@ -18,7 +18,7 @@ interface DoctorsPageParams {
 
 const DoctorsPage = async ({ params }: DoctorsPageParams) => {
   const session = await auth.api.getSession({ headers: await headers() });
-  const { id } = params;
+  const { id } = await params;
   if (!session?.user) {
     redirect('/authentication');
   }
