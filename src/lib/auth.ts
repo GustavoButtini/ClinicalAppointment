@@ -1,5 +1,7 @@
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
+import { customSession } from 'better-auth/plugins'; // Add this import or adjust the path as needed
+import { eq } from 'drizzle-orm';
 
 import { db } from '../db';
 import * as schema from '../db/schema';
@@ -37,4 +39,25 @@ export const auth = betterAuth({
       clientSecret: process.env.GOOGLE_SECRET_KEY as string,
     },
   },
+  plugins: [
+    customSession(async ({ user, session }) => {
+      const userclinics = await db.query.usersToClincs.findMany({
+        where: eq(schema.usersToClincs.userId, user.id),
+      });
+      const clinics = await Promise.all(
+        userclinics.map(async (clinic) => {
+          return await db.query.clinics.findFirst({
+            where: eq(schema.clinics.id, clinic.clinicId),
+          });
+        }),
+      );
+      return {
+        user: {
+          ...user,
+          clinics: clinics,
+        },
+        session,
+      };
+    }),
+  ],
 });

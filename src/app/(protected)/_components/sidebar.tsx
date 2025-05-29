@@ -1,139 +1,70 @@
-import {
-  BriefcaseMedicalIcon,
-  Calendar,
-  CalendarDaysIcon,
-  CalendarMinusIcon,
-  CalendarPlusIcon,
-  ChartNoAxesColumnIncreasingIcon,
-  UserRound,
-  UserRoundMinusIcon,
-  UserRoundPlusIcon,
-} from 'lucide-react';
+import { headers } from 'next/headers';
+import { redirect } from 'next/navigation';
 
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/ui/collapsible';
+import { Collapsible, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
-  SidebarGroupContent,
   SidebarGroupLabel,
   SidebarMenu,
+  SidebarMenuSub,
 } from '@/components/ui/sidebar';
+import { auth } from '@/lib/auth';
 
-import SidebarCollapsibleMenu from './sidebarCollapsibleMenu';
-const doctorsMenuItems = [
-  {
-    title: 'Doctors',
-    url: '/doctors',
-    icon: UserRound,
-  },
-  {
-    title: 'Create Doctor',
-    url: '/doctors/create',
-    icon: UserRoundPlusIcon,
-  },
-  {
-    title: 'Delete Doctor',
-    url: '/doctors/delete',
-    icon: UserRoundMinusIcon,
-  },
-];
+import SidebarBaseFunctionsMenu from './sidebarBaseFunctionsMenu';
 
-const clientsMenuItems = [
-  {
-    title: 'Clients',
-    url: '/clients',
-    icon: UserRound,
-  },
-  {
-    title: 'Create Client',
-    url: '/clients/create',
-    icon: UserRoundPlusIcon,
-  },
-  {
-    title: 'Delete Client',
-    url: '/clients/delete',
-    icon: UserRoundMinusIcon,
-  },
-];
-const appoitmentsMenuItems = [
-  {
-    title: 'Appoitments',
-    url: '/appoitment',
-    icon: Calendar,
-  },
-  {
-    title: 'Create Appoitment',
-    url: '/appoitment/create',
-    icon: CalendarPlusIcon,
-  },
-  {
-    title: 'Delete Appoitment',
-    url: '/appoitment/delete',
-    icon: CalendarMinusIcon,
-  },
-];
-// Menu items.
-const baseMenuItems = [
-  {
-    title: 'Doctors',
-    icon: BriefcaseMedicalIcon,
-    menu: doctorsMenuItems,
-  },
-  {
-    title: 'Clients',
-    icon: UserRound,
-    menu: clientsMenuItems,
-  },
-  {
-    title: 'Appoitments',
-    icon: CalendarDaysIcon,
-    menu: appoitmentsMenuItems,
-  },
-];
-
-export function AppSidebar() {
+export async function AppSidebar() {
+  const sessions = await auth.api.getSession({ headers: await headers() });
+  if (!sessions) {
+    redirect('/authentication');
+  }
   return (
     <Sidebar>
-      <SidebarContent className="space-y-4">
+      <SidebarContent>
         {/* Primary Options Menu */}
-        <Collapsible defaultOpen={true} className="group/collapsible">
+        <Collapsible defaultOpen={true} className="functions/collapsible">
           <SidebarGroup>
             <SidebarGroupLabel asChild>
               <CollapsibleTrigger>Functions</CollapsibleTrigger>
             </SidebarGroupLabel>
-            <CollapsibleContent>
-              <SidebarGroupContent className="w-full">
-                <SidebarMenu>
-                  <a href="/dashboard">
+            <SidebarMenu>
+              {sessions.user.clinics
+                .filter((clinic) => clinic !== undefined && clinic !== null)
+                .map((clinic) => (
+                  <SidebarMenuSub key={clinic.name}>
                     <Collapsible>
-                      <SidebarGroup className="pl-1.5">
-                        <SidebarGroupLabel asChild key="Dashboard">
-                          <CollapsibleTrigger>
-                            <ChartNoAxesColumnIncreasingIcon className="min-h-8 min-w-8" />
-                            Dashboard
-                          </CollapsibleTrigger>
+                      <SidebarGroup>
+                        <SidebarGroupLabel asChild>
+                          <CollapsibleTrigger>{clinic.name}</CollapsibleTrigger>
                         </SidebarGroupLabel>
+                        <SidebarBaseFunctionsMenu />
                       </SidebarGroup>
                     </Collapsible>
-                  </a>
-                  {baseMenuItems.map((item) => {
-                    return (
-                      <SidebarCollapsibleMenu
-                        title={item.title}
-                        icon={item.icon}
-                        menu={item.menu ?? []}
-                        key={item.title}
-                      />
-                    );
-                  })}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </CollapsibleContent>
+                  </SidebarMenuSub>
+                ))}
+            </SidebarMenu>
+          </SidebarGroup>
+        </Collapsible>
+        <Collapsible defaultOpen={false} className="account/collapsible">
+          <SidebarGroup>
+            <SidebarGroupLabel asChild>
+              <CollapsibleTrigger>Clinics</CollapsibleTrigger>
+            </SidebarGroupLabel>
+          </SidebarGroup>
+        </Collapsible>
+        <Collapsible defaultOpen={false} className="account/collapsible">
+          <SidebarGroup>
+            <SidebarGroupLabel asChild>
+              <CollapsibleTrigger>Account</CollapsibleTrigger>
+            </SidebarGroupLabel>
+          </SidebarGroup>
+        </Collapsible>
+        <Collapsible defaultOpen={false} className="extras/collapsible">
+          <SidebarGroup>
+            <SidebarGroupLabel asChild>
+              <CollapsibleTrigger>Extras</CollapsibleTrigger>
+            </SidebarGroupLabel>
           </SidebarGroup>
         </Collapsible>
       </SidebarContent>
