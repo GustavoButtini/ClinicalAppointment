@@ -13,6 +13,12 @@ import {
 import { auth } from '@/lib/auth';
 
 import SidebarBaseFunctionsMenu from './sidebarBaseFunctionsMenu';
+import SidebarCollapsibleMenu from './sidebarCollapsibleMenu';
+import {
+  accountOptionsList,
+  baseClinicList,
+  extrasOptionsList,
+} from './sideBarMainLists';
 
 export async function AppSidebar() {
   const sessions = await auth.api.getSession({ headers: await headers() });
@@ -46,27 +52,24 @@ export async function AppSidebar() {
             </SidebarMenu>
           </SidebarGroup>
         </Collapsible>
-        <Collapsible defaultOpen={false} className="account/collapsible">
-          <SidebarGroup>
-            <SidebarGroupLabel asChild>
-              <CollapsibleTrigger>Clinics</CollapsibleTrigger>
-            </SidebarGroupLabel>
-          </SidebarGroup>
-        </Collapsible>
-        <Collapsible defaultOpen={false} className="account/collapsible">
-          <SidebarGroup>
-            <SidebarGroupLabel asChild>
-              <CollapsibleTrigger>Account</CollapsibleTrigger>
-            </SidebarGroupLabel>
-          </SidebarGroup>
-        </Collapsible>
-        <Collapsible defaultOpen={false} className="extras/collapsible">
-          <SidebarGroup>
-            <SidebarGroupLabel asChild>
-              <CollapsibleTrigger>Extras</CollapsibleTrigger>
-            </SidebarGroupLabel>
-          </SidebarGroup>
-        </Collapsible>
+        {/* Clinics options:  */}
+        <SidebarCollapsibleMenu
+          title={baseClinicList.title}
+          icon={baseClinicList.icon}
+          menu={baseClinicList.menu}
+        />
+        {/*Account options: */}
+        <SidebarCollapsibleMenu
+          title={accountOptionsList.title}
+          icon={accountOptionsList.icon}
+          menu={accountOptionsList.menu}
+        />
+        {/*Extras options */}
+        <SidebarCollapsibleMenu
+          title={extrasOptionsList.title}
+          icon={extrasOptionsList.icon}
+          menu={extrasOptionsList.menu}
+        />
       </SidebarContent>
     </Sidebar>
   );

@@ -12,17 +12,42 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
-
 type Menu = {
   title: string;
   url: string;
   icon: ForwardRefExoticComponent<LucideProps>;
 };
+const checkHasIcon = (
+  icon:
+    | ForwardRefExoticComponent<
+        Omit<LucideProps, 'ref'> & RefAttributes<SVGSVGElement>
+      >
+    | undefined,
+  title: string,
+) => {
+  if (icon !== undefined) {
+    return (
+      <>
+        <div className="flex w-full content-center justify-start">
+          <div className="flex content-start justify-start pr-2">
+            {React.createElement(icon)}
+          </div>
+          {title}
+        </div>
+        <ArrowDownIcon />
+      </>
+    );
+  } else {
+    return <>{title}</>;
+  }
+};
 interface CollapsibleMenuProps {
   title: string;
-  icon: ForwardRefExoticComponent<
-    Omit<LucideProps, 'ref'> & RefAttributes<SVGSVGElement>
-  >;
+  icon:
+    | ForwardRefExoticComponent<
+        Omit<LucideProps, 'ref'> & RefAttributes<SVGSVGElement>
+      >
+    | undefined;
   menu: Menu[];
 }
 const SidebarCollapsibleMenu = ({
@@ -35,13 +60,7 @@ const SidebarCollapsibleMenu = ({
       <SidebarGroup>
         <SidebarGroupLabel asChild>
           <CollapsibleTrigger className="flex w-full content-between justify-between">
-            <div className="flex w-full content-center justify-start">
-              <div className="flex content-start justify-start pr-2">
-                {React.createElement(icon)}
-              </div>
-              {title}
-            </div>
-            <ArrowDownIcon />
+            {checkHasIcon(icon, title)}
           </CollapsibleTrigger>
         </SidebarGroupLabel>
         <CollapsibleContent
@@ -52,7 +71,7 @@ const SidebarCollapsibleMenu = ({
           <SidebarGroupContent>
             <SidebarMenu>
               {menu.map((item) => (
-                <SidebarMenuItem key={item.title}>
+                <SidebarMenuItem key={item.title} className="pt-3.5 pb-3.5">
                   <SidebarMenuButton asChild>
                     <a href={item.url}>
                       <item.icon />
