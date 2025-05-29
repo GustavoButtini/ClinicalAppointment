@@ -2,7 +2,6 @@ import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import React from 'react';
 
-import { Button } from '@/components/ui/button';
 import {
   PageContainer,
   PageHeader,
@@ -12,15 +11,17 @@ import {
 } from '@/components/ui/defaultpage';
 import { auth } from '@/lib/auth';
 
-interface DoctorsPageProps {
+import AddDoctorBtn from './components/addDoctorBtn';
+interface DoctorsPageParams {
   params: { id: string };
 }
-const DoctorsPage = async ({ params }: DoctorsPageProps) => {
+
+const DoctorsPage = async ({ params }: DoctorsPageParams) => {
   const session = await auth.api.getSession({ headers: await headers() });
+  const { id } = params;
   if (!session?.user) {
     redirect('/authentication');
   }
-  console.log(params.id);
   return (
     <PageContainer>
       <PageHeader>
@@ -37,7 +38,7 @@ const DoctorsPage = async ({ params }: DoctorsPageProps) => {
           </PageHeaderTextualDescription>
         </PageHeaderTextualContent>
         <PageHeaderButtons>
-          <Button>Say Hello</Button>
+          <AddDoctorBtn id={id} />
         </PageHeaderButtons>
       </PageHeader>
     </PageContainer>
