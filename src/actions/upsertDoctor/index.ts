@@ -43,8 +43,6 @@ export const UpsertDoctorOnDb = actionClient
       .minute(parseInt(parsedInput.availableFromTime.split(':')[1]))
       .second(parseInt(parsedInput.availableFromTime.split(':')[2]))
       .utc();
-    console.log(parsedInput.availableFromTime);
-    console.log(available_from_time_utc);
     const available_to_time_utc = dayjs()
       .set('hour', parseInt(parsedInput.availableToTime.split(':')[0]))
       .set('minute', parseInt(parsedInput.availableToTime.split(':')[1]))

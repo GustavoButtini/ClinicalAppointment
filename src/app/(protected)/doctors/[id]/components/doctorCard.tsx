@@ -1,6 +1,7 @@
+'use client';
 import { capitalizeFirstLetter } from 'better-auth';
 import { CalendarIcon, ClockIcon, DollarSignIcon } from 'lucide-react';
-import React from 'react';
+import { useState } from 'react';
 
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -17,20 +18,26 @@ import { doctors } from '@/db/schema';
 import { formatCurrencyInCentes } from '@/helpers/currency';
 
 import { Availability } from '../helpers/availability';
+import UpsertDoctorForm from './upsertDoctorForm';
 
 interface DoctorCardProps {
   doc: typeof doctors.$inferSelect;
 }
 
 const DoctorCard = ({ doc }: DoctorCardProps) => {
+  const [open, setOpen] = useState(false);
+  const handleClose = () => {
+    setOpen(false);
+  };
   const docsInitials = doc.name
+
     .split(' ')
     .map((item) => item[0])
     .join('');
   const docAvailability = Availability(doc);
 
   return (
-    <Card className="h-full gap-y-0">
+    <Card className="h-10/12 gap-y-0">
       <CardHeader className="flex flex-row justify-start gap-3 pt-4 pb-4">
         <div className="flex h-full w-full flex-row">
           <Avatar className="h-full w-4/12 items-center gap-2">
@@ -79,10 +86,20 @@ const DoctorCard = ({ doc }: DoctorCardProps) => {
         </Badge>
       </CardContent>
       <CardFooter>
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button>See Details</Button>
           </DialogTrigger>
+          <UpsertDoctorForm
+            isUpdate={true}
+            doctor={{
+              ...doc,
+              availableFromTime: docAvailability.from.format('HH:mm:ss'),
+              availableToTime: docAvailability.to.format('HH:mm:ss'),
+            }}
+            clinicId={doc.clinicId}
+            onSucess={handleClose}
+          />
         </Dialog>
       </CardFooter>
     </Card>

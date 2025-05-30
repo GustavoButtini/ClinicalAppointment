@@ -37,6 +37,7 @@ import * as schema from '@/db/schema';
 
 import { medicalSpecialties } from '../constants';
 import DisponibilityTimeFormField from './disponibilityTimeFormField';
+import RemoveDoctorBtn from './removeDoctorBtn';
 import WeekDayFormField from './weekDayFormField';
 export const upsertDoctorFormSchema = z
   .object({
@@ -82,7 +83,6 @@ export const upsertDoctorFormSchema = z
   );
 interface UpsertDoctorFormProps {
   clinicId: string;
-  isOpen: boolean;
   isUpdate: boolean;
   doctor?: typeof schema.doctors.$inferSelect;
   onSucess: () => void;
@@ -90,26 +90,28 @@ interface UpsertDoctorFormProps {
 const UpsertDoctorForm = ({
   clinicId,
   isUpdate,
+  doctor,
   onSucess,
 }: UpsertDoctorFormProps) => {
   const upsertDoctorForm = useForm<z.infer<typeof upsertDoctorFormSchema>>({
+    shouldUnregister: true,
     resolver: zodResolver(upsertDoctorFormSchema),
     defaultValues: {
-      name: '',
-      specialization: '',
-      email: '',
-      phone: '',
-      availableFromWeekDay: '',
-      availableToWeekDay: '',
-      availableFromTime: '',
-      availableToTime: '',
-      appoitmentPriceInCents: 0,
+      name: doctor?.name ?? '',
+      specialization: doctor?.specialization ?? '',
+      email: doctor?.email ?? '',
+      phone: doctor?.phone ?? '',
+      availableFromWeekDay: doctor?.availableFromWeekDay ?? '',
+      availableToWeekDay: doctor?.availableToWeekDay ?? '',
+      availableFromTime: doctor?.availableFromTime ?? '',
+      availableToTime: doctor?.availableToTime ?? '',
+      appoitmentPriceInCents: doctor?.appoitmentPriceInCents ?? 0,
     },
   });
   const upsertDoctorAction = useAction(UpsertDoctorOnDb, {
     onSuccess: () => {
       toast.success('Doctor Added with sucess');
-      onSucess?.();
+      onSucess();
     },
     onError: () => {
       toast.error('An error happend !');
@@ -117,10 +119,54 @@ const UpsertDoctorForm = ({
   });
   const onSubmit = async (data: z.infer<typeof upsertDoctorFormSchema>) => {
     upsertDoctorAction.execute({
+      id: doctor?.id,
       ...data,
       appoitmentPriceInCents: data.appoitmentPriceInCents * 100,
       clinicId: clinicId,
     });
+  };
+  const checkPendingIcon = () => {
+    return upsertDoctorAction.isPending ? <LoaderIcon /> : <></>;
+  };
+  const checkDefaultButtonTxt = () => {
+    return isUpdate ? <>Save info</> : <>Add Doctor</>;
+  };
+  const buttonGen = () => {
+    if (isUpdate) {
+      if (doctor !== undefined) {
+        return (
+          <div className="flex flex-row justify-end space-x-2">
+            <RemoveDoctorBtn
+              doctor={doctor}
+              clinicId={clinicId}
+              onSucess={onSucess}
+            />
+            <Button
+              type="submit"
+              className="w-1/2"
+              disabled={upsertDoctorAction.isPending}
+            >
+              {checkPendingIcon()}
+              {checkDefaultButtonTxt()}
+            </Button>
+          </div>
+        );
+      } else {
+        toast.error('This doctor cannot be acessed !');
+        onSucess();
+      }
+    } else {
+      return (
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={upsertDoctorAction.isPending}
+        >
+          {checkPendingIcon()}
+          {checkDefaultButtonTxt()}
+        </Button>
+      );
+    }
   };
   return (
     <DialogContent>
@@ -241,13 +287,7 @@ const UpsertDoctorForm = ({
               </FormItem>
             )}
           />
-          <Button
-            type="submit"
-            className="w-full"
-            disabled={upsertDoctorAction.isPending}
-          >
-            {upsertDoctorAction.isPending ? <LoaderIcon /> : <>Add doctor</>}
-          </Button>
+          {buttonGen()}
         </form>
       </Form>
     </DialogContent>
