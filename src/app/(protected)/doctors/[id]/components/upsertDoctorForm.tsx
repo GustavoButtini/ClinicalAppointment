@@ -1,11 +1,15 @@
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { capitalizeFirstLetter } from 'better-auth';
+import { LoaderIcon } from 'lucide-react';
+import { useAction } from 'next-safe-action/hooks';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { NumericFormat } from 'react-number-format';
+import { toast } from 'sonner';
 import { z } from 'zod';
 
+import { UpsertDoctorOnDb } from '@/actions/upsertDoctor';
 import { Button } from '@/components/ui/button';
 import {
   DialogContent,
@@ -81,9 +85,13 @@ interface UpsertDoctorFormProps {
   isOpen: boolean;
   isUpdate: boolean;
   doctor?: typeof schema.doctors.$inferSelect;
-  onSucess?: () => void;
+  onSucess: () => void;
 }
-const UpsertDoctorForm = ({ isUpdate }: UpsertDoctorFormProps) => {
+const UpsertDoctorForm = ({
+  clinicId,
+  isUpdate,
+  onSucess,
+}: UpsertDoctorFormProps) => {
   const upsertDoctorForm = useForm<z.infer<typeof upsertDoctorFormSchema>>({
     resolver: zodResolver(upsertDoctorFormSchema),
     defaultValues: {
@@ -98,8 +106,21 @@ const UpsertDoctorForm = ({ isUpdate }: UpsertDoctorFormProps) => {
       appoitmentPriceInCents: 0,
     },
   });
-  const onSubmit = () => {
-    console.log('Hello !');
+  const upsertDoctorAction = useAction(UpsertDoctorOnDb, {
+    onSuccess: () => {
+      toast.success('Doctor Added with sucess');
+      onSucess();
+    },
+    onError: () => {
+      toast.error('An error happend !');
+    },
+  });
+  const onSubmit = async (data: z.infer<typeof upsertDoctorFormSchema>) => {
+    upsertDoctorAction.execute({
+      ...data,
+      appoitmentPriceInCents: data.appoitmentPriceInCents * 100,
+      clinicId: clinicId,
+    });
   };
   return (
     <DialogContent>
@@ -190,19 +211,6 @@ const UpsertDoctorForm = ({ isUpdate }: UpsertDoctorFormProps) => {
             )}
           />
 
-          <FormField
-            control={upsertDoctorForm.control}
-            name="availableFromTime"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Starts work day on</FormLabel>
-                <FormControl>
-                  <Input placeholder="Jhon Doe" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
           <WeekDayFormField form={upsertDoctorForm} type="start" />
           <WeekDayFormField form={upsertDoctorForm} type="end" />
           <DisponibilityTimeFormField form={upsertDoctorForm} type="start" />
@@ -212,7 +220,7 @@ const UpsertDoctorForm = ({ isUpdate }: UpsertDoctorFormProps) => {
             name="appoitmentPriceInCents"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Price in cent of the appoitment</FormLabel>
+                <FormLabel>Price of the appoitment</FormLabel>
                 <FormControl>
                   <NumericFormat
                     value={field.value}
@@ -233,8 +241,12 @@ const UpsertDoctorForm = ({ isUpdate }: UpsertDoctorFormProps) => {
               </FormItem>
             )}
           />
-          <Button type="submit" className="w-full">
-            Add Doctor
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={upsertDoctorAction.isPending}
+          >
+            {upsertDoctorAction.isPending ? <LoaderIcon /> : <>Add doctor</>}
           </Button>
         </form>
       </Form>

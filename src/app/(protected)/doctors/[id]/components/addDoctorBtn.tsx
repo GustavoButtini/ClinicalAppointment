@@ -14,7 +14,7 @@ interface AddButtonInterface {
 const AddDoctorBtn = ({ id }: AddButtonInterface) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button>
           <Plus />
