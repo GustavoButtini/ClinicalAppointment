@@ -25,7 +25,7 @@ const AddDoctorBtn = ({ id }: AddButtonInterface) => {
         isUpdate={false}
         isOpen={isOpen}
         onSucess={() => {
-          setIsOpen(!isOpen);
+          setIsOpen(false);
         }}
         clinicId={id}
       />

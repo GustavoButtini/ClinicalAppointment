@@ -1,17 +1,26 @@
+import { eq } from 'drizzle-orm';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import React from 'react';
 
 import {
   PageContainer,
+  PageContent,
   PageHeader,
   PageHeaderButtons,
+  PageHeaderNavigation,
+  PageHeaderSubTitle,
   PageHeaderTextualContent,
   PageHeaderTextualDescription,
+  PageHeaderTitle,
 } from '@/components/ui/defaultpage';
+import { DoctorsPageContentGridFourByTwo } from '@/components/ui/docspage';
+import { db } from '@/db';
+import { doctors as docs } from '@/db/schema';
 import { auth } from '@/lib/auth';
 
 import AddDoctorBtn from './components/addDoctorBtn';
+import DoctorCard from './components/doctorCard';
 interface DoctorsPageParams {
   params: { id: string };
 }
@@ -22,25 +31,32 @@ const DoctorsPage = async ({ params }: DoctorsPageParams) => {
   if (!session?.user) {
     redirect('/authentication');
   }
+  const doctors = await db.query.doctors.findMany({
+    where: eq(docs.clinicId, id),
+  });
   return (
     <PageContainer>
       <PageHeader>
         <PageHeaderTextualContent>
-          {/*Change to actual navigation after*/}
-          <span className="inline">
-            Main Page - <p className="inline text-blue-400">Medicals </p>
-          </span>
+          <PageHeaderNavigation>Main - Doctors</PageHeaderNavigation>
           <PageHeaderTextualDescription>
-            <h1 className="text-3xl text-black">Doctors</h1>
-            <h6 className="text-sm text-gray-500">
+            <PageHeaderTitle>Doctors</PageHeaderTitle>
+            <PageHeaderSubTitle>
               Here you can manage all your doctors and theirs information !
-            </h6>
+            </PageHeaderSubTitle>
           </PageHeaderTextualDescription>
         </PageHeaderTextualContent>
         <PageHeaderButtons>
           <AddDoctorBtn id={id} />
         </PageHeaderButtons>
       </PageHeader>
+      <PageContent>
+        <DoctorsPageContentGridFourByTwo>
+          {doctors.map((doctor) => {
+            return <DoctorCard key={doctor.email} doc={doctor} />;
+          })}
+        </DoctorsPageContentGridFourByTwo>
+      </PageContent>
     </PageContainer>
   );
 };

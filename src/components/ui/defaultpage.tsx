@@ -1,12 +1,12 @@
 import React from 'react';
 
 export const PageContainer = ({ children }: { children: React.ReactNode }) => {
-  return <div className="space-y6 h-1/6 w-full p-6">{children}</div>;
+  return <div className="h-full w-full space-y-4 p-6">{children}</div>;
 };
 
 export const PageHeader = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div className="flex h-full w-full flex-row content-between justify-between">
+    <div className="flex h-1/6 w-full flex-row content-between justify-between">
       {children}
     </div>
   );
@@ -33,6 +33,28 @@ export const PageHeaderTextualDescription = ({
     </div>
   );
 };
+export const PageHeaderNavigation = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  return <span className="inline">{children}</span>;
+};
+export const PageHeaderTitle = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  return <h1 className="text-3xl text-black">{children}</h1>;
+};
+export const PageHeaderSubTitle = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  return <h6 className="text-sm text-gray-500">{children}</h6>;
+};
+
 export const PageHeaderButtons = ({
   children,
 }: {
@@ -40,6 +62,14 @@ export const PageHeaderButtons = ({
 }) => {
   return (
     <div className="flex h-full flex-row-reverse flex-wrap content-end justify-start">
+      {children}
+    </div>
+  );
+};
+
+export const PageContent = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <div className="flex h-8/12 w-full flex-col content-center justify-center">
       {children}
     </div>
   );

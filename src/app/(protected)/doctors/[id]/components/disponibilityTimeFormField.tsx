@@ -59,7 +59,7 @@ const DisponibilityTimeFormField = ({
               <SelectGroup>
                 <SelectLabel>Morning</SelectLabel>
                 {appoitmentMorningDisponibility.map((item) => (
-                  <SelectItem key={item} value={item}>
+                  <SelectItem key={item} value={item + ':00'}>
                     {item}
                   </SelectItem>
                 ))}
@@ -67,7 +67,7 @@ const DisponibilityTimeFormField = ({
               <SelectGroup>
                 <SelectLabel>Evening</SelectLabel>
                 {appoitmentEveningDisponibility.map((item) => (
-                  <SelectItem key={item} value={item}>
+                  <SelectItem key={item} value={item + ':00'}>
                     {item}
                   </SelectItem>
                 ))}
@@ -75,7 +75,7 @@ const DisponibilityTimeFormField = ({
               <SelectGroup>
                 <SelectLabel>Morning</SelectLabel>
                 {appoitmentNightDisponibility.map((item) => (
-                  <SelectItem key={item} value={item}>
+                  <SelectItem key={item} value={item + ':00'}>
                     {item}
                   </SelectItem>
                 ))}

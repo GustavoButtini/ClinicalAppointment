@@ -109,7 +109,7 @@ const UpsertDoctorForm = ({
   const upsertDoctorAction = useAction(UpsertDoctorOnDb, {
     onSuccess: () => {
       toast.success('Doctor Added with sucess');
-      onSucess();
+      onSucess?.();
     },
     onError: () => {
       toast.error('An error happend !');
