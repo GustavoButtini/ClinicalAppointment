@@ -13,7 +13,6 @@ import {
   SidebarMenu,
 } from '@/components/ui/sidebar';
 
-import SidebarCollapsibleMenu from './sidebarCollapsibleMenu';
 import { baseMenuItems } from './sideBarMainLists';
 interface SideBarBaseProps {
   id: string;
@@ -28,7 +27,7 @@ const SidebarBaseFunctionsMenu = ({ id }: SideBarBaseProps) => {
               <SidebarGroup className="pl-1.5">
                 <SidebarGroupLabel asChild key="Dashboard">
                   <CollapsibleTrigger>
-                    <ChartNoAxesColumnIncreasingIcon className="min-h-8 min-w-8" />
+                    <ChartNoAxesColumnIncreasingIcon className="min-h-8 min-w-8 pt-1 pr-2" />
                     Dashboard
                   </CollapsibleTrigger>
                 </SidebarGroupLabel>
@@ -37,13 +36,18 @@ const SidebarBaseFunctionsMenu = ({ id }: SideBarBaseProps) => {
           </a>
           {baseMenuItems.map((item) => {
             return (
-              <SidebarCollapsibleMenu
-                title={item.title}
-                icon={item.icon}
-                menu={item.menu ?? []}
-                key={item.title}
-                clinicIdVar={id}
-              />
+              <a href={item.url + '/' + id} key={item.title}>
+                <Collapsible>
+                  <SidebarGroup className="pl-1.5">
+                    <SidebarGroupLabel asChild>
+                      <CollapsibleTrigger>
+                        <item.icon className="min-h-8 min-w-8 pt-1 pr-2" />
+                        {item.title}
+                      </CollapsibleTrigger>
+                    </SidebarGroupLabel>
+                  </SidebarGroup>
+                </Collapsible>
+              </a>
             );
           })}
         </SidebarMenu>

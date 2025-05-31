@@ -122,12 +122,17 @@ export const patients = pgTable('patients', {
   email: text('email').notNull(),
   phone: text('phone').notNull(),
   sex: patientSexEnum('sex').notNull(),
+  clinicId: uuid().notNull(),
   dateOfBirth: timestamp('date_of_birth', { withTimezone: true }).notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
 });
-export const patientsTableRelations = relations(patients, ({ many }) => ({
+export const patientsTableRelations = relations(patients, ({ one, many }) => ({
   appoitments: many(appoitments),
+  clinics: one(clinics, {
+    fields: [patients.clinicId],
+    references: [clinics.id],
+  }),
 }));
 export const appoitments = pgTable('appoitments', {
   id: uuid().defaultRandom().primaryKey().notNull(),

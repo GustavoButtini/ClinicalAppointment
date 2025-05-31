@@ -1,9 +1,6 @@
 import {
   BriefcaseMedicalIcon,
-  Calendar,
   CalendarDaysIcon,
-  CalendarMinusIcon,
-  CalendarPlusIcon,
   FileCogIcon,
   ImageMinusIcon,
   ImagePlusIcon,
@@ -11,8 +8,6 @@ import {
   UserMinusIcon,
   UserPenIcon,
   UserRound,
-  UserRoundMinusIcon,
-  UserRoundPlusIcon,
 } from 'lucide-react';
 
 const clinicFunctionsList = [
@@ -62,74 +57,22 @@ const extrasFunctionsList = [
   },
 ];
 
-const doctorsMenuItems = [
-  {
-    title: 'Doctors',
-    url: '/doctors',
-    icon: UserRound,
-  },
-  {
-    title: 'Create Doctor',
-    url: '/doctors/create',
-    icon: UserRoundPlusIcon,
-  },
-  {
-    title: 'Delete Doctor',
-    url: '/doctors/delete',
-    icon: UserRoundMinusIcon,
-  },
-];
-
-const clientsMenuItems = [
-  {
-    title: 'Clients',
-    url: '/clients',
-    icon: UserRound,
-  },
-  {
-    title: 'Create Client',
-    url: '/clients/create',
-    icon: UserRoundPlusIcon,
-  },
-  {
-    title: 'Delete Client',
-    url: '/clients/delete',
-    icon: UserRoundMinusIcon,
-  },
-];
-const appoitmentsMenuItems = [
-  {
-    title: 'Appoitments',
-    url: '/appoitment',
-    icon: Calendar,
-  },
-  {
-    title: 'Create Appoitment',
-    url: '/appoitment/create',
-    icon: CalendarPlusIcon,
-  },
-  {
-    title: 'Delete Appoitment',
-    url: '/appoitment/delete',
-    icon: CalendarMinusIcon,
-  },
-];
 // Menu items.
 export const baseMenuItems = [
   {
     title: 'Doctors',
     icon: BriefcaseMedicalIcon,
-    menu: doctorsMenuItems,
+    url: '/doctors',
   },
   {
-    title: 'Clients',
+    title: 'Pacients',
     icon: UserRound,
-    menu: clientsMenuItems,
+    url: '/pacients',
   },
   {
     title: 'Appoitments',
     icon: CalendarDaysIcon,
-    menu: appoitmentsMenuItems,
+    url: '/appoitments',
   },
 ];
 export const baseClinicList = {
