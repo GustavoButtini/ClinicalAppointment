@@ -2,7 +2,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { LoaderIcon } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { PatternFormat } from 'react-number-format';
 import { toast } from 'sonner';
@@ -52,6 +52,7 @@ export const upsertPatientFormSchema = z.object({
 });
 
 interface UpsertPatientFormProps {
+  isOpen: boolean;
   clinicId: string;
   isUpdate: boolean;
   patient?: typeof schema.patients.$inferSelect;
@@ -59,6 +60,7 @@ interface UpsertPatientFormProps {
 }
 
 const UpsertPatientForm = ({
+  isOpen,
   clinicId,
   isUpdate,
   patient,
@@ -90,7 +92,19 @@ const UpsertPatientForm = ({
       toast.error('An error occurred!');
     },
   });
-
+  useEffect(() => {
+    if (isOpen) {
+      upsertPatientForm.reset({
+        name: patient?.name ?? '',
+        email: patient?.email ?? '',
+        phone: patient?.phone ?? '',
+        sex: (patient?.sex as 'male' | 'female') ?? undefined,
+        dateOfBirth: patient?.dateOfBirth
+          ? new Date(patient.dateOfBirth).toISOString().split('T')[0]
+          : '',
+      });
+    }
+  }, [isOpen, upsertPatientForm, patient]);
   const onSubmit = async (data: z.infer<typeof upsertPatientFormSchema>) => {
     upsertPatientAction.execute({
       id: patient?.id,

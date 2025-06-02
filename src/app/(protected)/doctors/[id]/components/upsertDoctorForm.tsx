@@ -3,7 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { capitalizeFirstLetter } from 'better-auth';
 import { LoaderIcon } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { NumericFormat } from 'react-number-format';
 import { toast } from 'sonner';
@@ -82,12 +82,14 @@ export const upsertDoctorFormSchema = z
     },
   );
 interface UpsertDoctorFormProps {
+  isOpen: boolean;
   clinicId: string;
   isUpdate: boolean;
   doctor?: typeof schema.doctors.$inferSelect;
   onSucess: () => void;
 }
 const UpsertDoctorForm = ({
+  isOpen,
   clinicId,
   isUpdate,
   doctor,
@@ -118,6 +120,9 @@ const UpsertDoctorForm = ({
     },
   });
   const onSubmit = async (data: z.infer<typeof upsertDoctorFormSchema>) => {
+    if (data.appoitmentPriceInCents === doctor?.appoitmentPriceInCents) {
+      data.appoitmentPriceInCents = data.appoitmentPriceInCents / 100;
+    }
     upsertDoctorAction.execute({
       id: doctor?.id,
       ...data,
@@ -125,6 +130,24 @@ const UpsertDoctorForm = ({
       clinicId: clinicId,
     });
   };
+  useEffect(() => {
+    if (isOpen) {
+      upsertDoctorForm.reset({
+        name: doctor?.name ?? '',
+        specialization: doctor?.specialization ?? '',
+        email: doctor?.email ?? '',
+        phone: doctor?.phone ?? '',
+        availableFromWeekDay: doctor?.availableFromWeekDay ?? '',
+        availableToWeekDay: doctor?.availableToWeekDay ?? '',
+        availableFromTime: doctor?.availableFromTime ?? '',
+        availableToTime: doctor?.availableToTime ?? '',
+        appoitmentPriceInCents:
+          doctor?.appoitmentPriceInCents !== undefined
+            ? doctor.appoitmentPriceInCents / 100
+            : 0,
+      });
+    }
+  }, [isOpen, upsertDoctorForm, doctor]);
   const checkPendingIcon = () => {
     return upsertDoctorAction.isPending ? <LoaderIcon /> : <></>;
   };

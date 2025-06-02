@@ -122,7 +122,9 @@ export const patients = pgTable('patients', {
   email: text('email').notNull(),
   phone: text('phone').notNull(),
   sex: patientSexEnum('sex').notNull(),
-  clinicId: uuid().notNull(),
+  clinicId: uuid()
+    .notNull()
+    .references(() => clinics.id, { onDelete: 'cascade' }),
   dateOfBirth: timestamp('date_of_birth', { withTimezone: true }).notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),

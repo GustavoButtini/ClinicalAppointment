@@ -91,6 +91,7 @@ const DoctorCard = ({ doc }: DoctorCardProps) => {
             <Button>See Details</Button>
           </DialogTrigger>
           <UpsertDoctorForm
+            isOpen={open}
             isUpdate={true}
             doctor={{
               ...doc,

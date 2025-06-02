@@ -26,6 +26,7 @@ const AddPatientButton = ({ id }: AddButtonInterface) => {
         onSuccess={() => {
           setIsOpen(false);
         }}
+        isOpen={isOpen}
         clinicId={id}
       />
     </Dialog>

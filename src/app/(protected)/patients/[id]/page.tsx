@@ -16,6 +16,8 @@ import { db } from '@/db';
 import { patients } from '@/db/schema';
 
 import AddPatientButton from './components/addPatientButton';
+import { DataTable } from './components/dataTablePatients';
+import { columns } from './components/tableColumns';
 interface PatientsPageParams {
   params: { id: string };
 }
@@ -44,9 +46,9 @@ const PatientsPage = async ({ params }: PatientsPageParams) => {
         </PageHeaderButtons>
       </PageHeader>
       <PageContent>
-        {listedPatients.map((item) => {
-          return <p key={item.id}>{item.name}</p>;
-        })}
+        <div className="flex-flex-col h-full content-start justify-start">
+          <DataTable columns={columns} data={listedPatients} />
+        </div>
       </PageContent>
     </PageContainer>
   );

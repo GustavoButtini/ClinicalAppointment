@@ -67,7 +67,7 @@ export const baseMenuItems = [
   {
     title: 'Pacients',
     icon: UserRound,
-    url: '/pacients',
+    url: '/patients',
   },
   {
     title: 'Appoitments',

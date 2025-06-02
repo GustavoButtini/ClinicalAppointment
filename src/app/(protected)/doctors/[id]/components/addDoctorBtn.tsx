@@ -23,6 +23,7 @@ const AddDoctorBtn = ({ id }: AddButtonInterface) => {
       </DialogTrigger>
       <UpsertDoctorForm
         isUpdate={false}
+        isOpen={isOpen}
         onSucess={() => {
           setIsOpen(false);
         }}
