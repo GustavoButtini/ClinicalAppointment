@@ -73,7 +73,7 @@ const DisponibilityTimeFormField = ({
                 ))}
               </SelectGroup>
               <SelectGroup>
-                <SelectLabel>Morning</SelectLabel>
+                <SelectLabel>Night</SelectLabel>
                 {appoitmentNightDisponibility.map((item) => (
                   <SelectItem key={item} value={item + ':00'}>
                     {item}

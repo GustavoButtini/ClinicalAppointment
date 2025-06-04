@@ -13,7 +13,7 @@ const SidebarClinicOptions = ({ item, clinicId }: ClinicOptionsProps) => {
   return (
     <SidebarMenuItem key={item.title} className="pt-3.5 pb-3.5">
       <SidebarMenuButton asChild>
-        <a href={item.url + '/' + clinicId}>
+        <a href={clinicId !== undefined ? item.url + '/' + clinicId : item.url}>
           <item.icon />
           {item.title}
         </a>
