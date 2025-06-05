@@ -5,16 +5,13 @@ import { Plus } from 'lucide-react';
 import React, { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { doctors, patients } from '@/db/schema';
 
 import UpsertAppointmentForm from './upsertAppoitmentsForm';
 interface AddButtonInterface {
   id: string;
-  patients: (typeof patients.$inferSelect)[];
-  doctors: (typeof doctors.$inferSelect)[];
 }
 
-const AddAppoitmentBtn = ({ id, doctors, patients }: AddButtonInterface) => {
+const AddAppoitmentBtn = ({ id }: AddButtonInterface) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -27,8 +24,6 @@ const AddAppoitmentBtn = ({ id, doctors, patients }: AddButtonInterface) => {
       <UpsertAppointmentForm
         isUpdate={false}
         isOpen={isOpen}
-        doctorsClinic={doctors}
-        patients={patients}
         onSucess={() => {
           setIsOpen(false);
         }}

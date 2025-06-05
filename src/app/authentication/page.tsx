@@ -1,16 +1,13 @@
-import { headers } from 'next/headers';
-
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { auth } from '@/lib/auth';
+import { sessionVerifier } from '@/helpers/sessionVerifier';
 import { authClient } from '@/lib/auth-client';
 
 import LoginFormComponent from './components/loginform';
 import SignUpForm from './components/signupform';
 
 const AuthenticationPage = async () => {
-  const session = await auth.api.getSession({ headers: await headers() });
-  if (session?.user) {
+  if (await sessionVerifier()) {
     authClient.signOut();
   }
   return (

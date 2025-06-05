@@ -44,6 +44,7 @@
     "react-hook-form": "^7.56.4",
     "react-number-format": "^5.4.4",
     "sonner": "^2.0.3",
+    "swr": "^2.3.3",
     "tailwind-merge": "^3.3.0",
     "zod": "^3.25.30"
   },

@@ -1,13 +1,12 @@
 'use server';
 import { and, eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
-import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
 
 import { db } from '@/db';
-import { patients, usersToClincs } from '@/db/schema';
-import { auth } from '@/lib/auth';
+import { patients } from '@/db/schema';
+import { sessionAndClinicsVerifier } from '@/helpers/sessionVerifier';
 import { actionClient } from '@/lib/safe-action';
 
 export const DeletePatient = actionClient
@@ -18,26 +17,7 @@ export const DeletePatient = actionClient
     }),
   )
   .action(async ({ parsedInput }) => {
-    const session = await auth.api.getSession({ headers: await headers() });
-    if (!session?.user) {
-      redirect('/authentication');
-    }
-    if (
-      (
-        await db
-          .select()
-          .from(usersToClincs)
-          .where(
-            and(
-              eq(usersToClincs.userId, session.user.id),
-              eq(usersToClincs.clinicId, parsedInput.clinicId),
-            ),
-          )
-      ).length <= 0
-    ) {
-      await auth.api.signOut({
-        headers: await headers(),
-      });
+    if (!(await sessionAndClinicsVerifier(parsedInput.clinicId))) {
       redirect('/authentication');
     }
     await db

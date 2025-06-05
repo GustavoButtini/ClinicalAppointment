@@ -5,14 +5,14 @@ import { redirect } from 'next/navigation';
 import { z } from 'zod';
 
 import { db } from '@/db';
-import { doctors } from '@/db/schema';
+import { appoitments } from '@/db/schema';
 import { sessionAndClinicsVerifier } from '@/helpers/sessionVerifier';
 import { actionClient } from '@/lib/safe-action';
 
-export const DeleteDoctor = actionClient
+export const deleteAppoitment = actionClient
   .schema(
     z.object({
-      docId: z.string().uuid().min(1),
+      appoitmentId: z.string().uuid().min(1),
       clinicId: z.string().uuid().min(1),
     }),
   )
@@ -21,12 +21,12 @@ export const DeleteDoctor = actionClient
       redirect('/authentication');
     }
     await db
-      .delete(doctors)
+      .delete(appoitments)
       .where(
         and(
-          eq(doctors.id, parsedInput.docId),
-          eq(doctors.clinicId, parsedInput.clinicId),
+          eq(appoitments.id, parsedInput.appoitmentId),
+          eq(appoitments.clinicId, parsedInput.clinicId),
         ),
       );
-    revalidatePath('/doctors/' + parsedInput.clinicId);
+    revalidatePath('/appoitments/' + parsedInput.clinicId);
   });

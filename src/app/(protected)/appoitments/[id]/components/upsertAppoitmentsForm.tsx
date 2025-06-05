@@ -4,7 +4,7 @@ import { capitalizeFirstLetter } from 'better-auth';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import { useAction } from 'next-safe-action/hooks';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -32,9 +32,11 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { appoitments, doctors, patients } from '@/db/schema';
+import { useDoctors, usePatients } from '@/lib/fetcher';
 
 import AppoitmentDateSelect from './appoitmentDateSelect';
 import AppoitmentTimeSelect from './appoitmentTimeSelect';
+import DeleteAppoitmentBtn from './deleteAppoitmentBtn';
 
 export const appointmentSchema = z.object({
   patientId: z.string().uuid({ message: 'Select a patient' }),
@@ -49,8 +51,6 @@ interface AddAppointmentFormProps {
   isOpen?: boolean;
   clinicId: string;
   isUpdate: boolean;
-  doctorsClinic: (typeof doctors.$inferSelect)[];
-  patients: (typeof patients.$inferSelect)[];
   appoitment?: typeof appoitments.$inferSelect;
   onSucess: () => void;
 }
@@ -58,13 +58,41 @@ interface AddAppointmentFormProps {
 const UpsertAppointmentForm = ({
   clinicId,
   isUpdate,
-  doctorsClinic,
-  patients,
   appoitment,
   onSucess,
 }: AddAppointmentFormProps) => {
+  //Variables - Use States
+  const [isDeleting, setIsDeleting] = useState(false);
   const [doctor, setDoctor] = useState<typeof doctors.$inferSelect>();
+  const [docs, setDocs] = useState<(typeof doctors.$inferSelect)[]>([]);
+  const [patientsClinic, setPatientsClinic] = useState<
+    (typeof patients.$inferSelect)[]
+  >([]);
+  //Variables - SWR Caching
+  const { allPatients, isLoadingPatients } = usePatients(clinicId);
+  const { allDoctors, isLoadingDocs } = useDoctors(clinicId);
+  //Variables - Time and Date formatters
   let time, date;
+  //Use Effect - Fetch Doctors
+  useEffect(() => {
+    if (!isLoadingDocs) {
+      setDocs(allDoctors);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoadingDocs]);
+  //Use Effect - Fetch patients
+  useEffect(() => {
+    if (!isLoadingPatients) {
+      setPatientsClinic(allPatients);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoadingPatients]);
+  //Use Effect - set already made appoitment time to correct format
+  useEffect(() => {
+    if (appoitment !== undefined) {
+      setDoctor(docs.find((doc) => doc.id === appoitment?.doctorId));
+    }
+  }, [appoitment, docs, patientsClinic]);
   if (appoitment !== undefined) {
     time =
       dayjs()
@@ -73,6 +101,7 @@ const UpsertAppointmentForm = ({
         .second(appoitment?.date.getSeconds())
         .utc()
         .local()
+        .format('HH:mm')
         .toString() || '';
     date =
       dayjs()
@@ -83,23 +112,28 @@ const UpsertAppointmentForm = ({
         .local()
         .toDate() || new Date('01/01/1901');
   }
+  //Appoitment Form
   const upsertAppoitmentForm = useForm<z.infer<typeof appointmentSchema>>({
+    shouldUnregister: true,
     resolver: zodResolver(appointmentSchema),
     defaultValues: {
       patientId: appoitment?.patientId ?? '',
       doctorId: appoitment?.doctorId ?? '',
       date: date,
-      time: time ?? '',
+      time: time,
     },
   });
-
   const upsertAppoitmentAction = useAction(createAppointment, {
     onSuccess: () => {
-      toast.success('The Appoitment has been made');
+      if (isUpdate) {
+        toast.success('The Appoitment has been updated !');
+      } else {
+        toast.success('The Appoitment has been created !');
+      }
       onSucess();
     },
     onError: () => {
-      toast.error('An Error has been occoured !');
+      toast.error('An Error has occoured !');
     },
   });
 
@@ -112,6 +146,7 @@ const UpsertAppointmentForm = ({
     data.date.setHours(parseInt(data.time.split(':')[0]));
     data.date.setMinutes(parseInt(data.time.split(':')[1]));
     upsertAppoitmentAction.execute({
+      id: appoitment?.id,
       clinicId: clinicId,
       patientId: data.patientId,
       doctorId: doctor.id,
@@ -120,7 +155,37 @@ const UpsertAppointmentForm = ({
     });
     upsertAppoitmentForm.reset();
   };
-
+  const createButtons = () => {
+    if (isUpdate && appoitment !== undefined) {
+      return (
+        <div className="flex flex-row content-center justify-around">
+          <DeleteAppoitmentBtn
+            isDeleting={isDeleting}
+            setIsDeleting={setIsDeleting}
+            appoitment={appoitment}
+            clinicId={clinicId}
+          />
+          <Button
+            className="h-full w-1/3"
+            type="submit"
+            disabled={upsertAppoitmentAction.isPending}
+          >
+            {upsertAppoitmentAction.isPending
+              ? 'Updating...'
+              : 'Update Appoitment'}
+          </Button>
+        </div>
+      );
+    } else {
+      return (
+        <Button type="submit" disabled={upsertAppoitmentAction.isPending}>
+          {upsertAppoitmentAction.isPending
+            ? 'Creating...'
+            : 'Create Appointment'}
+        </Button>
+      );
+    }
+  };
   return (
     <DialogContent>
       <DialogHeader>
@@ -151,7 +216,7 @@ const UpsertAppointmentForm = ({
                     <SelectValue placeholder="Select a patient" />
                   </SelectTrigger>
                   <SelectContent className="w-full">
-                    {patients.map((patient) => (
+                    {patientsClinic.map((patient) => (
                       <SelectItem key={patient.id} value={patient.id}>
                         {patient.name}
                       </SelectItem>
@@ -171,7 +236,7 @@ const UpsertAppointmentForm = ({
                 <Select
                   onValueChange={(val) => {
                     field.onChange(val);
-                    setDoctor(doctorsClinic.find((doc) => doc.id === val));
+                    setDoctor(docs.find((doc) => doc.id === val));
                   }}
                   value={field.value}
                 >
@@ -179,7 +244,7 @@ const UpsertAppointmentForm = ({
                     <SelectValue placeholder="Select a doctor" />
                   </SelectTrigger>
                   <SelectContent className="w-full">
-                    {doctorsClinic.map((doc) => (
+                    {docs.map((doc) => (
                       <SelectItem key={doc.id} value={doc.id}>
                         {doc.name} - {capitalizeFirstLetter(doc.specialization)}
                       </SelectItem>
@@ -218,28 +283,22 @@ const UpsertAppointmentForm = ({
               render={({ field }) => (
                 <FormItem className="w-full flex-1">
                   <FormLabel>Time</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select a time" />
-                    </SelectTrigger>
-                    <SelectContent className="w-full">
-                      {doctor !== undefined ? (
-                        <AppoitmentTimeSelect doctor={doctor} />
-                      ) : (
-                        <p>Select an Doctor</p>
-                      )}
-                    </SelectContent>
-                  </Select>
+                  {doctor !== undefined ? (
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select a time" />
+                      </SelectTrigger>
+                      <AppoitmentTimeSelect doctor={doctor} />
+                    </Select>
+                  ) : (
+                    <p>Select an Doctor !</p>
+                  )}
                   <FormMessage />
                 </FormItem>
               )}
             />
           </div>
-          <Button type="submit" disabled={upsertAppoitmentAction.isPending}>
-            {upsertAppoitmentAction.isPending
-              ? 'Creating...'
-              : 'Create Appointment'}
-          </Button>
+          {createButtons()}
         </form>
       </Form>
     </DialogContent>

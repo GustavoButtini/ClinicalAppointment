@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import React from 'react';
 
-import { SelectItem } from '@/components/ui/select';
+import { SelectContent, SelectItem } from '@/components/ui/select';
 import { doctors } from '@/db/schema';
 
 import { allAvailabilityTimes } from '../constants';
@@ -30,13 +30,13 @@ const AppoitmentTimeSelect = ({ doctor }: AppoitmentTimeSelectProps) => {
   );
   const docTime = allAvailabilityTimes.slice(startDate, endDate + 1);
   return (
-    <>
+    <SelectContent>
       {docTime.map((time) => (
         <SelectItem key={time} value={time}>
           {time}
         </SelectItem>
       ))}
-    </>
+    </SelectContent>
   );
 };
 

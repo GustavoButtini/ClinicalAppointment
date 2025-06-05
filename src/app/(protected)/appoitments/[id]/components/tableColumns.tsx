@@ -3,31 +3,29 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { z } from 'zod';
 
+import AppoitmentModifyMenu from './appoitmentModifyMenu';
+
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 
 export const AppoitmentSchema = z.object({
   id: z.string({}).uuid().min(1, { message: 'You need to insert a ID !' }),
-  doctor: z
+  doctorId: z
     .string({})
     .trim()
     .min(1, { message: 'You need to insert a doctor !' })
     .nonempty(),
-  patient: z
+  patientId: z
     .string({})
     .trim()
     .min(1, { message: 'You need to insert a patient !' })
     .nonempty(),
-  clinic: z
+  clinicId: z
     .string({})
     .uuid()
     .min(1, { message: 'You need to insert a clinic !' })
     .nonempty(),
-  date: z
-    .string({})
-    .trim()
-    .min(1, { message: 'You need to insert a date !' })
-    .nonempty(),
+  date: z.date(),
   price: z
     .number({})
     .min(1, { message: 'You need to insert a value greater than 0 !' }),
@@ -43,6 +41,16 @@ export const columns: ColumnDef<Appoitment>[] = [
     id: 'Date',
     accessorKey: 'date',
     header: 'Date',
+    cell: (params) => {
+      const date = params.row.original.date;
+      return (
+        <>
+          {date.toLocaleDateString() +
+            ' - ' +
+            date.toLocaleTimeString().substring(0, 5)}
+        </>
+      );
+    },
   },
   {
     id: 'Doctor',
@@ -59,5 +67,14 @@ export const columns: ColumnDef<Appoitment>[] = [
     id: 'Price',
     accessorKey: 'price',
     header: 'Price',
+  },
+  {
+    id: 'ModifyAppoitment',
+    accessorKey: 'modify',
+    header: 'Modify Appoitments',
+    cell: (params) => {
+      const appoitment = params.row.original;
+      return <AppoitmentModifyMenu appoitment={appoitment} />;
+    },
   },
 ];

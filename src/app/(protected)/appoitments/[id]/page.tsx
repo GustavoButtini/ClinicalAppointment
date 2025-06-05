@@ -32,8 +32,11 @@ const AppointmentsPage = async ({ params }: AppointmentsPageParams) => {
       id: appoitments.id,
       date: appoitments.date,
       patient: patients.name,
+      patientId: patients.id,
       doctor: doctors.name,
+      doctorId: doctors.id,
       clinic: clinics.name,
+      clinicId: clinics.id,
       price: doctors.appoitmentPriceInCents,
     })
     .from(appoitments)
@@ -44,17 +47,8 @@ const AppointmentsPage = async ({ params }: AppointmentsPageParams) => {
   const listedData = listedAppointments.map((appoitment) => {
     return {
       ...appoitment,
-      date:
-        appoitment.date.toLocaleDateString() +
-        ' - ' +
-        appoitment.date.toLocaleTimeString(),
     };
   });
-  const docs = await db.select().from(doctors).where(eq(doctors.clinicId, id));
-  const paties = await db
-    .select()
-    .from(patients)
-    .where(eq(patients.clinicId, id));
   return (
     <PageContainer>
       <PageHeader>
@@ -68,7 +62,7 @@ const AppointmentsPage = async ({ params }: AppointmentsPageParams) => {
           </PageHeaderTextualDescription>
         </PageHeaderTextualContent>
         <PageHeaderButtons>
-          <AddAppoitmentBtn id={id} doctors={docs} patients={paties} />
+          <AddAppoitmentBtn id={id} />
         </PageHeaderButtons>
       </PageHeader>
       <PageContent>
