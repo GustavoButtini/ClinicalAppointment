@@ -1,57 +1,29 @@
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 
-import { Collapsible, CollapsibleTrigger } from '@/components/ui/collapsible';
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuSub,
-} from '@/components/ui/sidebar';
+import { Separator } from '@/components/ui/separator';
+import { Sidebar, SidebarContent } from '@/components/ui/sidebar';
 import { auth } from '@/lib/auth';
 
-import SidebarBaseFunctionsMenu from './sidebarBaseFunctionsMenu';
 import SidebarCollapsibleMenu from './sidebarCollapsibleMenu';
 import {
   accountOptionsList,
   baseClinicList,
   extrasOptionsList,
 } from './sideBarMainLists';
+import SidebarUserClinics from './sidebarUserClinics';
 
-export async function AppSidebar() {
-  const sessions = await auth.api.getSession({ headers: await headers() });
-  if (!sessions) {
+export const AppSidebar = async () => {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session?.user) {
     redirect('/authentication');
   }
   return (
     <Sidebar>
-      <SidebarContent>
+      <SidebarContent className="gap-0">
         {/* Primary Options Menu */}
-        <Collapsible defaultOpen={true} className="functions/collapsible">
-          <SidebarGroup>
-            <SidebarGroupLabel asChild>
-              <CollapsibleTrigger>Functions</CollapsibleTrigger>
-            </SidebarGroupLabel>
-            <SidebarMenu>
-              {sessions.user.clinics
-                .filter((clinic) => clinic !== undefined && clinic !== null)
-                .map((clinic) => (
-                  <SidebarMenuSub key={clinic.name}>
-                    <Collapsible>
-                      <SidebarGroup>
-                        <SidebarGroupLabel asChild>
-                          <CollapsibleTrigger>{clinic.name}</CollapsibleTrigger>
-                        </SidebarGroupLabel>
-                        <SidebarBaseFunctionsMenu id={clinic.id} />
-                      </SidebarGroup>
-                    </Collapsible>
-                  </SidebarMenuSub>
-                ))}
-            </SidebarMenu>
-          </SidebarGroup>
-        </Collapsible>
+        <SidebarUserClinics clinics={session.user.clinics} />
+        <Separator />
         {/* Clinics options:  */}
         <SidebarCollapsibleMenu
           title={baseClinicList.title}
@@ -59,6 +31,7 @@ export async function AppSidebar() {
           menu={baseClinicList.menu}
           clinicIdVar={undefined}
         />
+        <Separator />
         {/*Account options: */}
         <SidebarCollapsibleMenu
           title={accountOptionsList.title}
@@ -66,6 +39,7 @@ export async function AppSidebar() {
           menu={accountOptionsList.menu}
           clinicIdVar={undefined}
         />
+        <Separator />
         {/*Extras options */}
         <SidebarCollapsibleMenu
           title={extrasOptionsList.title}
@@ -76,4 +50,4 @@ export async function AppSidebar() {
       </SidebarContent>
     </Sidebar>
   );
-}
+};

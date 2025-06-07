@@ -1,59 +1,47 @@
-import {
-  BriefcaseMedicalIcon,
-  CalendarDaysIcon,
-  FileCogIcon,
-  ImageMinusIcon,
-  ImagePlusIcon,
-  UserIcon,
-  UserMinusIcon,
-  UserPenIcon,
-  UserRound,
-} from 'lucide-react';
-
 const clinicFunctionsList = [
   {
     title: 'Create Clinic',
     url: '/clinic/create',
-    icon: ImagePlusIcon,
+    icon: 'ImagePlus',
   },
   {
     title: 'Change Clinic',
     url: '/clinic/change',
-    icon: FileCogIcon,
+    icon: 'FileCog',
   },
   {
     title: 'Delete Clinic',
     url: '/clinic/create',
-    icon: ImageMinusIcon,
+    icon: 'ImageMinus',
   },
 ];
 const accountFunctionsList = [
   {
     title: 'User Information',
     url: '/account/info',
-    icon: UserIcon,
+    icon: 'User',
   },
   {
     title: 'Change User Information',
     url: '/account/change',
-    icon: UserPenIcon,
+    icon: 'UserPen',
   },
   {
     title: 'Delete User',
     url: '/account/delete',
-    icon: UserMinusIcon,
+    icon: 'UserMinus',
   },
 ];
 const extrasFunctionsList = [
   {
     title: 'See plans',
     url: '/plans',
-    icon: FileCogIcon,
+    icon: 'FileCog',
   },
   {
     title: 'LogOut',
     url: '/logout',
-    icon: ImageMinusIcon,
+    icon: 'ImageMinus',
   },
 ];
 
@@ -61,32 +49,32 @@ const extrasFunctionsList = [
 export const baseMenuItems = [
   {
     title: 'Doctors',
-    icon: BriefcaseMedicalIcon,
+    icon: 'BriefcaseMedical',
     url: '/doctors',
   },
   {
     title: 'Pacients',
-    icon: UserRound,
+    icon: 'UserRound',
     url: '/patients',
   },
   {
     title: 'Appoitments',
-    icon: CalendarDaysIcon,
+    icon: 'CalendarDays',
     url: '/appoitments',
   },
 ];
 export const baseClinicList = {
   title: 'Clinics',
-  icon: undefined,
+  icon: 'Hospital',
   menu: clinicFunctionsList,
 };
 export const accountOptionsList = {
   title: 'Account',
-  icon: undefined,
+  icon: 'User',
   menu: accountFunctionsList,
 };
 export const extrasOptionsList = {
   title: 'Extra Actions',
-  icon: undefined,
+  icon: 'Plus',
   menu: extrasFunctionsList,
 };

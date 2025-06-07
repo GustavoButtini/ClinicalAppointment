@@ -13,13 +13,14 @@ import {
   SidebarMenu,
 } from '@/components/ui/sidebar';
 
+import { selectIcon } from '../helpers/iconSelector';
 import { baseMenuItems } from './sideBarMainLists';
 interface SideBarBaseProps {
   id: string;
 }
 const SidebarBaseFunctionsMenu = ({ id }: SideBarBaseProps) => {
   return (
-    <CollapsibleContent>
+    <CollapsibleContent className="data-[state=open]:animate-collapsible-down data-[state=closed]:animate-collapsible-up overflow-hidden transition-all">
       <SidebarGroupContent className="w-full">
         <SidebarMenu>
           <a href="/dashboard">
@@ -41,7 +42,7 @@ const SidebarBaseFunctionsMenu = ({ id }: SideBarBaseProps) => {
                   <SidebarGroup className="pl-1.5">
                     <SidebarGroupLabel asChild>
                       <CollapsibleTrigger>
-                        <item.icon className="min-h-8 min-w-8 pt-1 pr-2" />
+                        {selectIcon(item.icon)}
                         {item.title}
                       </CollapsibleTrigger>
                     </SidebarGroupLabel>
