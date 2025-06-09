@@ -11,7 +11,7 @@ const clinicFunctionsList = [
   },
   {
     title: 'Delete Clinic',
-    url: '/clinic/create',
+    url: '/clinic/delete',
     icon: 'ImageMinus',
   },
 ];
