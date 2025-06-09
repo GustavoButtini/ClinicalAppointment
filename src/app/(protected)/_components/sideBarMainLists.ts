@@ -6,7 +6,7 @@ const clinicFunctionsList = [
   },
   {
     title: 'Change Clinic',
-    url: '/clinic/change',
+    url: '/clinic/update',
     icon: 'FileCog',
   },
   {

@@ -13,7 +13,12 @@ export const GET = async () => {
     redirect('/authentication');
   }
   const userClinics = await db
-    .select({ id: clinics.id, name: clinics.name })
+    .select({
+      id: clinics.id,
+      name: clinics.name,
+      address: clinics.address,
+      phone: clinics.phone,
+    })
     .from(usersToClincs)
     .leftJoin(clinics, eq(usersToClincs.clinicId, clinics.id))
     .where(eq(usersToClincs.userId, session.user.id));
