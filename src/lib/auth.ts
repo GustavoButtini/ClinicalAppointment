@@ -41,6 +41,11 @@ export const auth = betterAuth({
   },
   plugins: [
     customSession(async ({ user, session }) => {
+      const userPhone = await db
+        .select({ phone: schema.users.phone })
+        .from(schema.users)
+        .where(eq(schema.users.id, user.id));
+
       const userclinics = await db.query.usersToClincs.findMany({
         where: eq(schema.usersToClincs.userId, user.id),
         with: {
@@ -53,6 +58,7 @@ export const auth = betterAuth({
       return {
         user: {
           ...user,
+          phone: userPhone[0].phone ?? '',
           clinics: clinics,
         },
         session,

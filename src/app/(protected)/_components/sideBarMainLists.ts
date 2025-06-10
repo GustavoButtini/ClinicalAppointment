@@ -18,12 +18,12 @@ const clinicFunctionsList = [
 const accountFunctionsList = [
   {
     title: 'User Information',
-    url: '/account/info',
+    url: '/user/information',
     icon: 'User',
   },
   {
     title: 'Change User Information',
-    url: '/account/change',
+    url: '/user/update',
     icon: 'UserPen',
   },
   {
