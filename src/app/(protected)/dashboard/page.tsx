@@ -19,7 +19,9 @@ const DashBoardPage = async () => {
   if (userCreatedClinics.length <= 0) {
     redirect('/clinic-create');
   }
-  return <h1>Hello !</h1>;
+  if (userCreatedClinics.length >= 1) {
+    redirect('/dashboard/' + userCreatedClinics[0].clinicId);
+  }
 };
 
 export default DashBoardPage;
