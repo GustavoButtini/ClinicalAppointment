@@ -21,7 +21,7 @@ import { DataTable } from './components/dataTableAppoitments';
 import { columns } from './components/tableColumns';
 
 interface AppointmentsPageParams {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 const AppointmentsPage = async ({ params }: AppointmentsPageParams) => {

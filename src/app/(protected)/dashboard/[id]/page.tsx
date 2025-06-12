@@ -19,7 +19,7 @@ import { db } from '@/db';
 import * as schema from '@/db/schema';
 
 interface DashboardProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 const getTodayAppointments = async (clinicId: string) => {
@@ -193,7 +193,7 @@ const getFatureChartData = async (clinicId: string) => {
 };
 
 const ClinicDashboard = async ({ params }: DashboardProps) => {
-  const clinicId = params.id;
+  const clinicId = (await params).id;
   const { totalFature, totalAppointments, totalPatients, totalMedics, medics } =
     await getClinicDashboardData(clinicId);
 

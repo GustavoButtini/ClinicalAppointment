@@ -7,7 +7,7 @@ import { sessionAndClinicsVerifier } from '@/helpers/sessionVerifier';
 
 export const GET = async (
   req: Request,
-  { params }: { params: { clinicId: string } },
+  { params }: { params: Promise<{ clinicId: string }> },
 ) => {
   const { clinicId } = await params;
   if (!(await sessionAndClinicsVerifier(clinicId))) {

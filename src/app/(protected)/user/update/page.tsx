@@ -26,7 +26,7 @@ import { Input } from '@/components/ui/input';
 
 import ChangePasswordDialog from './components/changePasswordDialog';
 
-export const updateUserSchema = z.object({
+const updateUserSchema = z.object({
   id: z.string().uuid().min(1, { message: 'You need an user ID !' }),
   name: z.string().optional(),
   email: z.string().optional(),

@@ -22,7 +22,7 @@ import { auth } from '@/lib/auth';
 import AddDoctorBtn from './components/addDoctorBtn';
 import DoctorCard from './components/doctorCard';
 interface DoctorsPageParams {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 const DoctorsPage = async ({ params }: DoctorsPageParams) => {

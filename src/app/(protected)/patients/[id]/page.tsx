@@ -19,7 +19,7 @@ import AddPatientButton from './components/addPatientButton';
 import { DataTable } from './components/dataTablePatients';
 import { columns } from './components/tableColumns';
 interface PatientsPageParams {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 const PatientsPage = async ({ params }: PatientsPageParams) => {
