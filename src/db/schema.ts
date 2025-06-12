@@ -25,6 +25,7 @@ export const users = pgTable('users', {
     .$defaultFn(() => /* @__PURE__ */ new Date())
     .notNull(),
   phone: text('phone'),
+  plan: text('plan'),
 });
 export const usersTableRelations = relations(users, ({ many }) => ({
   usersToClincs: many(usersToClincs),

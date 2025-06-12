@@ -16,12 +16,17 @@ const DashBoardPage = async () => {
   const userCreatedClinics = await db.query.usersToClincs.findMany({
     where: eq(usersToClincs.userId, session.user.id),
   });
+
+  if (session.user.plan === null) {
+    redirect('/plans/select');
+  }
   if (userCreatedClinics.length <= 0) {
     redirect('/clinic-create');
   }
   if (userCreatedClinics.length >= 1) {
     redirect('/dashboard/' + userCreatedClinics[0].clinicId);
   }
+  return null;
 };
 
 export default DashBoardPage;

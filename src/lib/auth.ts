@@ -42,7 +42,7 @@ export const auth = betterAuth({
   plugins: [
     customSession(async ({ user, session }) => {
       const userPhone = await db
-        .select({ phone: schema.users.phone })
+        .select({ phone: schema.users.phone, plan: schema.users.plan })
         .from(schema.users)
         .where(eq(schema.users.id, user.id));
 
@@ -59,6 +59,7 @@ export const auth = betterAuth({
         user: {
           ...user,
           phone: userPhone[0].phone ?? '',
+          plan: userPhone[0].plan ?? null,
           clinics: clinics,
         },
         session,
