@@ -4,6 +4,7 @@ import {
   CollapsibleTrigger,
 } from '@radix-ui/react-collapsible';
 import { ChartNoAxesColumnIncreasingIcon } from 'lucide-react';
+import Link from 'next/link';
 import React from 'react';
 
 import {
@@ -23,7 +24,7 @@ const SidebarBaseFunctionsMenu = ({ id }: SideBarBaseProps) => {
     <CollapsibleContent className="data-[state=open]:animate-collapsible-down data-[state=closed]:animate-collapsible-up overflow-hidden transition-all">
       <SidebarGroupContent className="w-full">
         <SidebarMenu>
-          <a href="/dashboard">
+          <Link href="/dashboard">
             <Collapsible>
               <SidebarGroup className="pl-1.5">
                 <SidebarGroupLabel asChild key="Dashboard">
@@ -34,7 +35,7 @@ const SidebarBaseFunctionsMenu = ({ id }: SideBarBaseProps) => {
                 </SidebarGroupLabel>
               </SidebarGroup>
             </Collapsible>
-          </a>
+          </Link>
           {baseMenuItems.map((item) => {
             return (
               <a href={item.url + '/' + id} key={item.title}>
